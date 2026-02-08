@@ -1,0 +1,32 @@
+text
+.globl main
+main:
+ li x5, 0x00006948 #'hi' in hex
+ li x6, 0x200 #address of string y
+ sw x5, 0(x6) #store 'hi' at 0x200
+ li x10, 0x100 #string x
+ li x11, 0x200 #string y
+
+ jal x1, strcpy
+ j done
+strcpy:
+ addi sp, sp, -16 #allocate stack
+ sw x19, 8(sp) #push i
+ li x19, 0 #i=0
+loop:
+ add x5, x11, x19 #x5=address of y[i]+i
+ lbu x6, 0(x5) #x6= new element at y[i] loaded
+
+ add x7, x10, x19 #x7=address of x[i]
+ sb x6, 0(x7) #x[i]=y[i]
+ beq x6, x0, exit #if null byte (ie. 0) then exit
+
+ addi x19, x19, 1 #i++
+ j loop
+exit:
+ lw x19, 8(sp) #pop i
+ addi sp, sp, 16 #deallocate stack
+
+ jalr x0, 0(x1) #return
+done:
+ j done
