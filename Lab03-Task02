@@ -1,0 +1,32 @@
+text
+.globl main
+main:
+ li x10, 1 #g=1
+ li x11, 2 #h=2
+ li x12, 3 #i=3
+ li x13, 4 #j=4
+ jal x1, leaf
+ li x11,0
+ add x11, x11, x20
+ li x10,1
+ ecall
+j exit
+
+leaf:
+ addi sp, sp, -16 #deallocayting our stack
+ sw x20, 8(sp) #pushing f into stack
+ sw x19, 4(sp) #pushing temp into stack
+ sw x18, 0(sp) #pushing temp into stack
+ add x18, x10, x11 #g+h
+ add x19, x12, x13 #i+j
+ sub x20, x18, x19 #g+h
+
+ lw x18, 0(sp) #popping temp from stack
+ lw x19, 4(sp) #popping temp from stack
+
+ jalr x0, 0(x1) #return statement
+ addi sp, sp, 16 #deallocated stack
+
+
+exit:
+ j exit
